@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        ClusterMart | Supermarket Customer Segmentation
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<div class="app-shell">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🛒
+            </div>
+
+            <div>
+
+                <div class="brand-name">
+                    ClusterMart
+                </div>
+
+                <div class="brand-subtitle">
+                    DATA MINING PROJECT
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="workspace-label">
+            WORKSPACE
+        </div>
+
+
+        <nav class="navigation">
+
+            <a
+                href="#dashboard"
+                class="nav-link active"
+            >
+                ▦
+                <span>Dashboard</span>
+            </a>
+
+
+            <a
+                href="#dataset"
+                class="nav-link"
+            >
+                ▤
+                <span>Dataset</span>
+            </a>
+
+
+            <a
+                href="#clustering"
+                class="nav-link"
+            >
+                ◉
+                <span>Clustering</span>
+            </a>
+
+
+            <a
+                href="#results"
+                class="nav-link"
+            >
+                ▥
+                <span>Results</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-card">
+
+            <div class="sparkle">
+                ✦
+            </div>
+
+            <h3>
+                Discover your customers
+            </h3>
+
+            <p>
+                Find meaningful customer groups
+                using unsupervised machine learning.
+            </p>
+
+        </div>
+
+
+        <div class="sidebar-footer">
+            DATA MINING PROJECT · 2026
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section
+            id="dashboard"
+            class="hero"
+        >
+
+            <div class="eyebrow">
+                RETAIL ANALYTICS · UNSUPERVISED ML
+            </div>
+
+
+            <h1>
+                Understand your customers.
+                <span>
+                    Discover their segments.
+                </span>
+            </h1>
+
+
+            <p class="hero-description">
+                Upload customer data, select the attributes
+                that matter, and discover meaningful customer
+                groups using K-Means or hierarchical clustering.
+            </p>
+
+
+            <a
+                href="#dataset"
+                class="hero-button"
+            >
+                Explore dataset ↗
+            </a>
+
+        </section>
+
+
+        <!-- =================================================
+             ALERTS
+        ================================================== -->
+
+        {% if message %}
+
+        <div class="alert success">
+            {{ message }}
+        </div>
+
+        {% endif %}
+
+
+        {% if error %}
+
+        <div class="alert error">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             OVERVIEW
+        ================================================== -->
+
+        <section class="section-block">
+
+            <div class="section-kicker">
+                OVERVIEW
+            </div>
+
+            <h2>
+                Your analytics at a glance
+            </h2>
+
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Customer records
+                    </div>
+
+                    <div class="stat-value">
+                        {{ record_count }}
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Available features
+                    </div>
+
+                    <div class="stat-value">
+                        {{ feature_count }}
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Current dataset
+                    </div>
+
+                    <div class="stat-value dataset-name">
+                        {{ dataset_name }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DATASET
+        ================================================== -->
+
+        <section
+            id="dataset"
+            class="content-card"
+        >
+
+            <div class="step-header">
+
+                <div>
+
+                    <div class="section-kicker">
+                        STEP 01
+                    </div>
+
+                    <h2>
+                        Upload your dataset
+                    </h2>
+
+                    <p>
+                        Use the default retail customer dataset
+                        or upload your own CSV file.
+                    </p>
+
+                </div>
+
+                <div class="step-number">
+                    01
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+                class="upload-form"
+            >
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="upload"
+                >
+
+
+                <div class="upload-box">
+
+                    <div class="upload-icon">
+                        ↑
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Choose a customer CSV file
+                        </strong>
+
+                        <p>
+                            CSV format only
+                        </p>
+
+                    </div>
+
+                    <input
+                        type="file"
+                        name="dataset"
+                        accept=".csv"
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        Upload dataset
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <form
+                method="POST"
+                class="reset-form"
+            >
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="reset"
+                >
+
+                Using the default retail dataset?
+
+                <button
+                    type="submit"
+                    class="text-button"
+                >
+                    Reset to default dataset
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             DATA PREVIEW
+        ================================================== -->
+
+        <section class="content-card">
+
+            <div class="section-kicker">
+                STEP 02
+            </div>
+
+            <h2>
+                Preview your data
+            </h2>
+
+            <p class="section-description">
+                Showing the first 8 records from the current
+                dataset.
+            </p>
+
+
+            {% if preview_rows %}
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            {% for column in preview_columns %}
+
+                            <th>
+                                {{ column }}
+                            </th>
+
+                            {% endfor %}
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for row in preview_rows %}
+
+                        <tr>
+
+                            {% for column in preview_columns %}
+
+                            <td>
+                                {{ row[column] }}
+                            </td>
+
+                            {% endfor %}
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="empty-state">
+                No dataset loaded.
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             CLUSTER CONFIGURATION
+        ================================================== -->
+
+        <section
+            id="clustering"
+            class="content-card"
+        >
+
+            <div class="step-header">
+
+                <div>
+
+                    <div class="section-kicker">
+                        STEP 03
+                    </div>
+
+                    <h2>
+                        Configure your clusters
+                    </h2>
+
+                    <p>
+                        Select customer attributes and choose
+                        a clustering algorithm.
+                    </p>
+
+                </div>
+
+                <div class="step-number">
+                    03
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                id="clustering-form"
+            >
+
+                <input
+                    type="hidden"
+                    name="action"
+                    value="cluster"
+                >
+
+
+                <!-- =========================================
+                     FEATURE SELECTION
+                ========================================== -->
+
+                <div class="subsection">
+
+                    <h3>
+                        Select customer attributes
+                    </h3>
+
+                    <p class="section-description">
+                        Choose the customer characteristics that
+                        should influence the segmentation.
+                        Categorical attributes are automatically
+                        encoded before clustering.
+                    </p>
+
+
+                    {% if feature_options %}
+
+
+                    <!-- =====================================
+                         DEMOGRAPHICS
+                    ====================================== -->
+
+                    <div class="feature-group">
+
+                        <div class="feature-group-header">
+
+                            <div>
+
+                                <span class="feature-group-icon">
+                                    👤
+                                </span>
+
+                                <strong>
+                                    Demographics
+                                </strong>
+
+                            </div>
+
+                            <small>
+                                Basic customer characteristics
+                            </small>
+
+                        </div>
+
+
+                        <div class="feature-grid">
+
+                            {% for feature in feature_options %}
+
+                                {% if feature.group == "Demographics" %}
+
+                                <label class="feature-card">
+
+                                    <input
+                                        type="checkbox"
+                                        name="features"
+                                        value="{{ feature.column }}"
+
+                                        {% if feature.column in [
+                                            "Age"
+                                        ] %}
+                                        checked
+                                        {% endif %}
+                                    >
+
+                                    <span class="checkmark">
+                                        ✓
+                                    </span>
+
+
+                                    <span class="feature-content">
+
+                                        <strong>
+                                            {{ feature.display }}
+                                        </strong>
+
+                                        <small>
+                                            {{ feature.description }}
+                                        </small>
+
+                                    </span>
+
+                                </label>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         PURCHASE BEHAVIOR
+                    ====================================== -->
+
+                    <div class="feature-group">
+
+                        <div class="feature-group-header">
+
+                            <div>
+
+                                <span class="feature-group-icon">
+                                    🛍️
+                                </span>
+
+                                <strong>
+                                    Purchase Behavior
+                                </strong>
+
+                            </div>
+
+                            <small>
+                                Spending and purchasing activity
+                            </small>
+
+                        </div>
+
+
+                        <div class="feature-grid">
+
+                            {% for feature in feature_options %}
+
+                                {% if feature.group == "Purchase Behavior" %}
+
+                                <label class="feature-card">
+
+                                    <input
+                                        type="checkbox"
+                                        name="features"
+                                        value="{{ feature.column }}"
+
+                                        {% if feature.column in [
+                                            "Purchase Amount (USD)",
+                                            "Previous Purchases",
+                                            "Purchase Frequency (per year)"
+                                        ] %}
+                                        checked
+                                        {% endif %}
+                                    >
+
+                                    <span class="checkmark">
+                                        ✓
+                                    </span>
+
+
+                                    <span class="feature-content">
+
+                                        <strong>
+                                            {{ feature.display }}
+                                        </strong>
+
+                                        <small>
+                                            {{ feature.description }}
+                                        </small>
+
+                                    </span>
+
+                                </label>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         PRODUCT PREFERENCES
+                    ====================================== -->
+
+                    <div class="feature-group">
+
+                        <div class="feature-group-header">
+
+                            <div>
+
+                                <span class="feature-group-icon">
+                                    🏷️
+                                </span>
+
+                                <strong>
+                                    Product Preferences
+                                </strong>
+
+                            </div>
+
+                            <small>
+                                Types of products customers purchase
+                            </small>
+
+                        </div>
+
+
+                        <div class="feature-grid">
+
+                            {% for feature in feature_options %}
+
+                                {% if feature.group == "Product Preferences" %}
+
+                                <label class="feature-card">
+
+                                    <input
+                                        type="checkbox"
+                                        name="features"
+                                        value="{{ feature.column }}"
+                                    >
+
+                                    <span class="checkmark">
+                                        ✓
+                                    </span>
+
+
+                                    <span class="feature-content">
+
+                                        <strong>
+                                            {{ feature.display }}
+                                        </strong>
+
+                                        <small>
+                                            {{ feature.description }}
+                                        </small>
+
+                                    </span>
+
+                                </label>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         CUSTOMER BEHAVIOR
+                    ====================================== -->
+
+                    <div class="feature-group">
+
+                        <div class="feature-group-header">
+
+                            <div>
+
+                                <span class="feature-group-icon">
+                                    ⭐
+                                </span>
+
+                                <strong>
+                                    Customer Behavior
+                                </strong>
+
+                            </div>
+
+                            <small>
+                                Satisfaction, subscription and promotion behavior
+                            </small>
+
+                        </div>
+
+
+                        <div class="feature-grid">
+
+                            {% for feature in feature_options %}
+
+                                {% if feature.group == "Customer Behavior" %}
+
+                                <label class="feature-card">
+
+                                    <input
+                                        type="checkbox"
+                                        name="features"
+                                        value="{{ feature.column }}"
+
+                                        {% if feature.column in [
+                                            "Review Rating"
+                                        ] %}
+                                        checked
+                                        {% endif %}
+                                    >
+
+                                    <span class="checkmark">
+                                        ✓
+                                    </span>
+
+
+                                    <span class="feature-content">
+
+                                        <strong>
+                                            {{ feature.display }}
+                                        </strong>
+
+                                        <small>
+                                            {{ feature.description }}
+                                        </small>
+
+                                    </span>
+
+                                </label>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         TRANSACTION BEHAVIOR
+                    ====================================== -->
+
+                    <div class="feature-group">
+
+                        <div class="feature-group-header">
+
+                            <div>
+
+                                <span class="feature-group-icon">
+                                    💳
+                                </span>
+
+                                <strong>
+                                    Transaction Behavior
+                                </strong>
+
+                            </div>
+
+                            <small>
+                                Payment and delivery preferences
+                            </small>
+
+                        </div>
+
+
+                        <div class="feature-grid">
+
+                            {% for feature in feature_options %}
+
+                                {% if feature.group == "Transaction Behavior" %}
+
+                                <label class="feature-card">
+
+                                    <input
+                                        type="checkbox"
+                                        name="features"
+                                        value="{{ feature.column }}"
+                                    >
+
+                                    <span class="checkmark">
+                                        ✓
+                                    </span>
+
+
+                                    <span class="feature-content">
+
+                                        <strong>
+                                            {{ feature.display }}
+                                        </strong>
+
+                                        <small>
+                                            {{ feature.description }}
+                                        </small>
+
+                                    </span>
+
+                                </label>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    {% else %}
+
+                    <div class="empty-state">
+
+                        <strong>
+                            No clustering features available.
+                        </strong>
+
+                        <p>
+                            Upload a compatible customer CSV file
+                            to see the available attributes.
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <div class="feature-note">
+
+                        <strong>
+                            💡 Feature selection tip
+                        </strong>
+
+                        <p>
+                            Numeric attributes such as age, purchase
+                            amount and previous purchases are used
+                            directly. Categorical attributes such as
+                            gender, category and subscription status
+                            are automatically converted into numerical
+                            representations before clustering.
+                        </p>
+
+                    </div>
+
+
+                    <p class="helper-text">
+
+                        Select at least two attributes.
+                        Customer ID, item names, location, color and
+                        size are not offered as primary clustering
+                        features because they are identifiers or can
+                        create unnecessarily high-dimensional segments.
+
+                    </p>
+
+                </div>
+
+
+                <!-- =========================================
+                     ALGORITHM CONTROLS
+                ========================================== -->
+
+                <div class="controls-grid">
+
+                    <div class="control-group">
+
+                        <label for="algorithm">
+                            Clustering algorithm
+                        </label>
+
+                        <select
+                            id="algorithm"
+                            name="algorithm"
+                        >
+
+                            <option value="kmeans">
+                                K-Means — Partitional
+                            </option>
+
+                            <option value="hierarchical">
+                                Hierarchical — Agglomerative
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label for="k">
+                            Number of clusters (K)
+                        </label>
+
+                        <select
+                            id="k"
+                            name="k"
+                        >
+
+                            <option value="2">
+                                2 clusters
+                            </option>
+
+                            <option value="3">
+                                3 clusters
+                            </option>
+
+                            <option value="4">
+                                4 clusters
+                            </option>
+
+                            <option value="5" selected>
+                                5 clusters
+                            </option>
+
+                            <option value="6">
+                                6 clusters
+                            </option>
+
+                            <option value="7">
+                                7 clusters
+                            </option>
+
+                            <option value="8">
+                                8 clusters
+                            </option>
+
+                            <option value="9">
+                                9 clusters
+                            </option>
+
+                            <option value="10">
+                                10 clusters
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =========================================
+                     METHOD INFORMATION
+                ========================================== -->
+
+                <div class="method-info">
+
+                    <strong>
+                        ✦ Clustering methods
+                    </strong>
+
+
+                    <p>
+
+                        <b>K-Means:</b>
+
+                        Partitional clustering divides customers
+                        into K groups by minimizing the distance
+                        between customers and their cluster centers.
+
+                    </p>
+
+
+                    <p>
+
+                        <b>Hierarchical:</b>
+
+                        Agglomerative clustering starts with
+                        individual customers and progressively
+                        merges similar groups to form a hierarchy.
+
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="run-button"
+                >
+                    Run clustering →
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             RESULTS
+        ================================================== -->
+
+        {% if results %}
+
+        <section
+            id="results"
+            class="results-section"
+        >
+
+            <div class="section-kicker">
+                STEP 04
+            </div>
+
+
+            <h2>
+                Your clustering results
+            </h2>
+
+
+            <p class="section-description">
+                The following visualizations show the customer
+                groups discovered by the selected algorithm.
+            </p>
+
+
+            <!-- =============================================
+                 RESULT SUMMARY
+            ============================================== -->
+
+            <div class="result-summary-grid">
+
+                <div class="result-card">
+
+                    <span>
+                        Algorithm
+                    </span>
+
+                    <strong>
+                        {{ results.algorithm }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-card">
+
+                    <span>
+                        Number of clusters
+                    </span>
+
+                    <strong>
+                        {{ results.k }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-card">
+
+                    <span>
+                        Customers analyzed
+                    </span>
+
+                    <strong>
+                        {{ results.total_customers }}
+                    </strong>
+
+                </div>
+
+
+                <div class="result-card">
+
+                    <span>
+                        Attributes used
+                    </span>
+
+                    <strong>
+                        {{ results.selected_features|length }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 FEATURES USED
+            ============================================== -->
+
+            <div class="selected-feature-box">
+
+                <strong>
+                    Attributes used for clustering
+                </strong>
+
+
+                <div class="tag-list">
+
+                    {% for feature in results.selected_features %}
+
+                    <span class="tag">
+                        {{ feature }}
+                    </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 CHART ROW
+            ============================================== -->
+
+            <div class="chart-grid">
+
+                <div class="chart-card">
+
+                    <div class="chart-heading">
+
+                        <span>
+                            CUSTOMER GROUPS
+                        </span>
+
+                        <h3>
+                            Customer Cluster Visualization
+                        </h3>
+
+                        <p>
+                            Visual representation of the discovered
+                            customer groups using PCA.
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        id="cluster-chart"
+                        class="chart"
+                    ></div>
+
+                </div>
+
+
+                <div class="chart-card">
+
+                    <div class="chart-heading">
+
+                        <span>
+                            CLUSTER DISTRIBUTION
+                        </span>
+
+                        <h3>
+                            Customers in Each Cluster
+                        </h3>
+
+                        <p>
+                            Number of customers assigned to each
+                            cluster.
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        id="cluster-size-chart"
+                        class="chart"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 ELBOW CURVE
+            ============================================== -->
+
+            <div class="chart-card elbow-card">
+
+                <div class="chart-heading">
+
+                    <span>
+                        MODEL SELECTION
+                    </span>
+
+                    <h3>
+                        Elbow Curve
+                    </h3>
+
+                    <p>
+                        The Elbow Method shows how clustering
+                        compactness changes as K increases.
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="elbow-chart"
+                    class="chart"
+                ></div>
+
+            </div>
+
+
+            <!-- =============================================
+                 CLUSTER SUMMARY
+            ============================================== -->
+
+            <div class="summary-card">
+
+                <div class="chart-heading">
+
+                    <span>
+                        CUSTOMER SEGMENTS
+                    </span>
+
+                    <h3>
+                        Cluster Summary
+                    </h3>
+
+                    <p>
+                        Average characteristics and dominant
+                        behavior of customers in each discovered
+                        segment.
+                    </p>
+
+                </div>
+
+
+                {% if results.summary %}
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Cluster
+                                </th>
+
+                                <th>
+                                    Segment
+                                </th>
+
+                                <th>
+                                    Customers
+                                </th>
+
+
+                                {% for key in results.summary[0].keys() %}
+
+                                    {% if key not in [
+                                        "cluster",
+                                        "segment",
+                                        "customers"
+                                    ] %}
+
+                                    <th>
+                                        {{ key|replace("_", " ")|title }}
+                                    </th>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for row in results.summary %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        Cluster {{ row.cluster }}
+                                    </strong>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="segment-badge">
+                                        {{ row.segment }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    {{ row.customers }}
+                                </td>
+
+
+                                {% for key, value in row.items() %}
+
+                                    {% if key not in [
+                                        "cluster",
+                                        "segment",
+                                        "customers"
+                                    ] %}
+
+                                    <td>
+                                        {{ value }}
+                                    </td>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+                    No cluster summary is available.
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =============================================
+                 CLUSTER INTERPRETATION
+            ============================================== -->
+
+            <div class="method-info result-explanation">
+
+                <strong>
+                    ✦ How to interpret these segments
+                </strong>
+
+                <p>
+                    Each cluster represents customers with similar
+                    characteristics according to the attributes you
+                    selected. For example, a cluster with higher
+                    purchase amounts and frequent purchases may
+                    represent highly active customers, while a cluster
+                    with lower purchase frequency may represent
+                    occasional shoppers.
+                </p>
+
+                <p>
+                    The PCA chart is a two-dimensional visualization
+                    of the higher-dimensional clustering feature space.
+                    The axes do not represent individual original
+                    attributes.
+                </p>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer>
+
+            <strong>
+                ClusterMart
+            </strong>
+
+            <span>
+                Supermarket Customer Segmentation
+                · Data Mining · 2026
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+<!-- =========================================================
+     FLASK RESULT DATA
+
+     Jinja is used only here.
+     script.js remains normal JavaScript.
+========================================================= -->
+
+<script id="cluster-data" type="application/json">
+    {{ results | tojson | safe }}
+</script>
+
+
+<script
+    src="{{ url_for('static', filename='script.js') }}"
+></script>
+
+
+</body>
+
+</html>
